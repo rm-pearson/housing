@@ -11,6 +11,14 @@ CREATE OR REPLACE VIEW state_rates AS(
 );
 
 
+SELECT *
+FROM crosstab(
+	'SELECT state_name, year, unhoused_per_100k FROM state_rates ORDER BY state_name, year',
+	'SELECT DISTINCT year FROM state_rates ORDER BY year'
+	) AS ct(state_name text, "2009" int, "2010" int, "2011" int, "2012" int, "2013" int, "2014" int, "2015" int, "2016" int, "2017" int, "2018" int, "2019" int, "2020" int, "2021" int, "2022" int, "2023" int, "2024" int)
+	;
+
+
 -- highest avg homelessness rates
 SELECT 
 	state_name,
@@ -71,9 +79,62 @@ LIMIT 5
 
 -- Observation / point to pursue: several of the largest yoy decreases were in 2021, and then several of the largest increases were in 2022! 
 
+-- which states have trended most strongly upward or downward, and which have stayed relatively the same?
+-- Stongest downward trends in homelessness rates:
+SELECT state_name,
+	REGR_SLOPE(year, unhoused_per_100k) AS trendline
+FROM state_rates
+GROUP BY state_name
+ORDER BY trendline ASC
+LIMIT 5
+;
 
-SELECT *
-FROM crosstab(
-	'SELECT state_name, year, unhoused_per_100k FROM state_rates ORDER BY state_name, year',
-	'SELECT DISTINCT year FROM state_rates ORDER BY year'
-	) AS ct(state_name text, "2009" int, "2010" int, "2011" int, "2012" int, "2013" int, "2014" int, "2015" int, "2016" int, "2017" int, "2018" int, "2019" int, "2020" int, "2021" int, "2022" int, "2023" int, "2024" int);
+-- Stongest upward trends in homelessness rates:
+SELECT state_name,
+	REGR_SLOPE(year, unhoused_per_100k) AS trendline
+FROM state_rates
+GROUP BY state_name
+ORDER BY trendline DESC
+LIMIT 5
+;
+
+-- Least change in homelessness rates:
+SELECT state_name,
+	REGR_SLOPE(year, unhoused_per_100k) AS trendline
+FROM state_rates
+GROUP BY state_name
+ORDER BY ABS(REGR_SLOPE(year, unhoused_per_100k)) ASC
+LIMIT 5
+;
+
+-- What trends are the top 10 states w/highest avg homelessness rates experiencing?
+SELECT 
+	state_name,
+	ROUND(AVG(unhoused_per_100k)) AS state_avg,
+	REGR_SLOPE(year, unhoused_per_100k) AS trendline
+FROM state_rates
+GROUP BY state_name
+ORDER BY state_avg DESC
+LIMIT 10
+;
+
+-- What trends are the states with the CURRENT highest homelessness rate experiencing?
+WITH top_10_2024 AS
+	(SELECT
+		state_name,
+		unhoused_per_100k AS unhoused_2024
+	FROM state_rates
+	WHERE year = '2024'
+	ORDER BY unhoused_per_100k DESC
+	LIMIT 10)
+
+SELECT
+	state_name,
+	unhoused_2024,
+	REGR_SLOPE(year, unhoused_per_100k) AS trendline
+FROM state_rates s INNER JOIN top_10_2024 t USING(state_name)
+GROUP BY state_name, unhoused_2024
+;
+
+
+	
