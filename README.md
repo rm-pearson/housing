@@ -18,6 +18,9 @@ This project is a work in progress and may yet be altered.
 - How has the inventory of permanent housing changed in relationship to population growth?
 - How has the cost of permanent housing changed in relationship to incomes? 
 
+#### National Trends
+- How has Virginia compared to the rest of the United States over this period?
+
 ## Data Sources
 - U.S. Census Bureau [American Community Survey (ACS) 5-year estimates](https://www.census.gov/programs-surveys/acs/)
 - Point-in-Time data files accessed from [HUD User](https://www.huduser.gov/portal/datasets/ahar.html)
