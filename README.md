@@ -24,6 +24,22 @@ This project is a work in progress and may yet be altered.
 ## Data Sources
 - U.S. Census Bureau [American Community Survey (ACS) 5-year estimates](https://www.census.gov/programs-surveys/acs/)
 - Point-in-Time data files accessed from [HUD User](https://www.huduser.gov/portal/datasets/ahar.html)
+- Housing Inventory Counts accessed from [HUD Exchange](https://www.hudexchange.info/programs/coc/coc-housing-inventory-count-reports/)
 
 ### Other sources
 - City of Grants Pass v. Johnson, 603 U.S. ___ (2024)
+
+
+# Process
+
+## Data Acquisition
+### HUD Data
+The U.S. Department of Housing and Urban Development (HUD) collects data from Continuum of Care (CoC) networks in the United States to better understand homelessness and shelter availability.
+
+The Point-in-Time (PIT) Count is a single-night count of individuals experiencing homelessness who are unsheltered or sheltered in emergency shelter, transistional housing, and Safe Haven.  Sheltered individuals are counted every year, while unsheltered individuals are only required to be counted every other year.
+
+- A spreadsheet of PIT Counts from 2007 - 2024 was downloaded from HUD User, and relevant columns copied out into a more normalized table structure for use in PostgreSQL.
+
+The Housing Inventory Count (HIC) is a point-in-time report of beds and units available to unhoused people and families within the CoC.
+
+- I was only able to find HIC reports in PDF format; data was transcribed into a normalized table for use in PostgreSQL.
